@@ -2,17 +2,19 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 
 public class PixelSorting {
 
-    private BufferedImage img;
+    private BufferedImage img1, img2;
     private JFrame frame;
     private int[][] pixels;
     private int x, y;
@@ -23,19 +25,25 @@ public class PixelSorting {
     public JFrame setup(String path) throws IOException {
 
         File imgFile = new File(path);
-        img = ImageIO.read(imgFile);
-
-        x = img.getWidth();
-        y = img.getHeight();
+        img1 = ImageIO.read(imgFile);
+        x = img1.getWidth();
+        y = img1.getHeight();
+        img2 = new BufferedImage(x, y, BufferedImage.TYPE_INT_RGB);
 
         frame = new JFrame("PixelSorting");
-        frame.setSize(x + 2 * xBorder, y + 2 * yBorder);
+        frame.setSize(x*2 + 2 * xBorder, y + 2 * yBorder);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        ImageIcon icon = new ImageIcon(img);
-        JLabel label = new JLabel(icon);
-        frame.add(label);
-        //frame.getContentPane().add(new JLabel(new ImageIcon(img)));
+        ImageIcon icon1 = new ImageIcon(img1);
+        ImageIcon icon2 = new ImageIcon(img2);
+        JLabel label1 = new JLabel(icon1);
+        JLabel label2 = new JLabel(icon2);
+
+        frame.add(label1);
+        frame.add(label2);
+
+        frame.setLayout(new FlowLayout());
+        //frame.getContentPane().add(new JLabel(new ImageIcon(img1)));
         frame.setVisible(true);
 
         pixels = this.getPixels();
@@ -49,8 +57,8 @@ public class PixelSorting {
     public int[][] getPixels() {
 
         int[][] result = new int[y][x];
-        byte[] bytePixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();    //I read the pixels byte by byte
-        boolean hasAlpha = (img.getAlphaRaster() != null);
+        byte[] bytePixels = ((DataBufferByte) img1.getRaster().getDataBuffer()).getData();    //I read the pixels byte by byte
+        boolean hasAlpha = (img1.getAlphaRaster() != null);
 
         if (hasAlpha) {
             final int pixelLenght = 4;
@@ -93,16 +101,16 @@ public class PixelSorting {
     }
 
 
-    private Color[][] getColors(int[][] pixels) {
+    private myColor[][] getColors(int[][] pixels) {
 
         int x = pixels[0].length;
         int y = pixels.length;
 
-        Color[][] colorMatrix = new Color[y][x];
+        myColor[][] colorMatrix = new myColor[y][x];
 
         for (int row = 0, col = 0; row < y; ) {
 
-            colorMatrix[row][col] = new Color(pixels[row][col]);
+            colorMatrix[row][col] = new myColor(pixels[row][col]);
 
             col++;
             if (col >= x) {
@@ -113,6 +121,16 @@ public class PixelSorting {
         return colorMatrix;
     }
 
+    private myColor[] getColors(int[] pixels){
+        int x= pixels.length;
+        myColor[] result=new myColor[x];
+
+        for(int i=0; i<x; i++){
+            result[i]=new myColor(pixels[i]);
+        }
+
+        return result;
+    }
 
     public void colorSwap(Color sourceColor, Color newColor, int tolerance) {
 
@@ -138,7 +156,23 @@ public class PixelSorting {
             }
         }
 
-        img.setRGB(0, 0, x, y, matrixToArray(pixels), 0, x);
+        img1.setRGB(0, 0, x, y, matrixToArray(pixels), 0, x);
+        frame.repaint();
+    }
+
+    public void pixelSort(){
+
+        int[] pixelArray=this.matrixToArray(pixels);
+        //Arrays.sort(pixelArray);
+
+        myColor[] colorArray = getColors(pixelArray);
+        Arrays.sort(colorArray);
+
+        for(int i=0; i<colorArray.length;i++){
+            pixelArray[i]=colorArray[i].getRGB();
+        }
+
+        img2.setRGB(0,0,x, y, pixelArray, 0,x);
         frame.repaint();
     }
 
@@ -172,13 +206,34 @@ public class PixelSorting {
             return;
         }
 
-        for (int i = 0; i < 1000; i++) {
-            instance.colorSwap(new Color(207, 207, 207, 255), Color.green, i);
+       /* for (int i = 0; i < 1000; i++) {
+            instance.colorSwap(new Color(207, 207, 207, 255), new Color(67, 255, 90, 255), i);
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
+        instance.pixelSort();
+    }
+}
+
+class myColor extends java.awt.Color implements Comparable<myColor>{
+    public myColor(int rgb){
+        super(rgb);
+    }
+
+    @Override
+    public int compareTo(myColor o) {
+        int r1=this.getRed(), r2=o.getRed();
+        int g1=this.getGreen(), g2=o.getGreen();
+        int b1=this.getBlue(), b2=o.getBlue();
+
+        if(r1!=r2) return r1-r2;
+        if(g1!=g2) return g1-g2;
+        if(b1!=b2) return b1-b2;
+        else
+            return 0;
+
     }
 }
