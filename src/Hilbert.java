@@ -1,5 +1,8 @@
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Hilbert {
 
@@ -46,7 +49,6 @@ public class Hilbert {
         Arrays.sort(customColors);
 
         System.arraycopy(customColors, 0, colors, 0, colors.length);
-
     }
 
     private static boolean isSuitable(Color color, Color pt, int maxDist) {
@@ -94,11 +96,52 @@ public class Hilbert {
         return Math.sqrt(x+y+z);
     }
 
-    private static void main(String args[]) {
+    public static void main(String args[]) {
 
-        Hilbert.pointsGeneration(256, 16);
-        
+        //Hilbert.pointsGeneration(256, 16);
+        Random r=new Random();
+        int n=1000;
+        Color[] colors=new Color[n];
 
+        for (int i = 0; i < n; i++) {
+            colors[i] = new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256));
+        }
+
+        JFrame frame=new JFrame("Test Hilber Color Sorting");
+
+        frame.setSize(1200, 300);
+
+        BufferedImage img1=new BufferedImage(n, 100, BufferedImage.TYPE_INT_RGB);
+        BufferedImage img2=new BufferedImage(n, 100, BufferedImage.TYPE_INT_RGB);
+
+        ImageIcon icon1 = new ImageIcon(img1);
+        ImageIcon icon2 = new ImageIcon(img2);
+        JLabel label1 = new JLabel(icon1);
+        JLabel label2 = new JLabel(icon2);
+
+        frame.add(label1);
+        frame.add(label2);
+
+        frame.setLayout(new FlowLayout());
+        //frame.getContentPane().add(new JLabel(new ImageIcon(img1)));*/
+        frame.setVisible(true);
+
+        for(int i=0; i<n; i++){
+            int[] color=new int[100];
+            Arrays.fill(color, colors[i].getRGB());
+            img1.setRGB(i, 0, 1, 100, color, 0, 1);
+        }
+
+        sort(256, colors, 16);
+        //colors=ColorSorting.sort(colors);
+
+        for(int i=0; i<n; i++){
+            int[] color=new int[100];
+            Arrays.fill(color, colors[i].getRGB());
+            img2.setRGB(i, 0, 1, 100, color, 0, 1);
+        }
+
+        frame.repaint();
     }
 
 

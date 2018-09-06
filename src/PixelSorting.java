@@ -139,6 +139,8 @@ public class PixelSorting {
         int[] pixelArray = this.matrixToArray(pixels);
 
         Color[] colorArray = getColors(pixelArray);
+        Color[] oldColors = new Color[colorArray.length];
+        System.arraycopy(colorArray, 0, oldColors, 0, oldColors.length);
 
         //colorArray = ColorSorting.sort(colorArray);
         Hilbert.sort(256, colorArray, 16);
@@ -147,7 +149,21 @@ public class PixelSorting {
             pixelArray[i] = colorArray[i].getRGB();
         }
 
-        img2.setRGB(0, 0, x, y, pixelArray, 0, x);
+
+        for (int i = 0; i < pixelArray.length; i++) {
+
+            int toTake=pixelArray[i];
+            int j=0;
+            while(oldColors[j].getRGB()!=toTake)
+                j++;
+            img1.setRGB(j%x, j/x, Color.WHITE.getRGB());
+            img2.setRGB(i%x, i/x, pixelArray[i]);
+            oldColors[j]=Color.WHITE;
+            System.out.println(i + " pixels moved");
+            frame.repaint();
+        }
+
+        //img2.setRGB(0, 0, x, y, pixelArray, 0, x);
         frame.repaint();
     }
 
