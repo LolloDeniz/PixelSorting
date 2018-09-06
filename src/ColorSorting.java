@@ -137,7 +137,7 @@ public class ColorSorting {
 
         @Override
         public int compareTo(myColor o) {
-            return this.rank - o.rank;
+            return (this.rank - o.rank);
         }
     }
 
