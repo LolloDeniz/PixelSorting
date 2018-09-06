@@ -4,11 +4,7 @@ import java.util.Random;
 
 public class ColorSorting {
 
-    myColor[] colors;
-
-    static int[] redSort;
-    static int[] greenSort;
-    static int[] blueSort;
+    private myColor[] colors;
 
     public ColorSorting(int n) {
 
@@ -35,9 +31,9 @@ public class ColorSorting {
     static public Color[] sort(myColor[] colors) {
         int n = colors.length;
 
-        redSort = new int[n];
-        greenSort = new int[n];
-        blueSort = new int[n];
+        int[] redSort = new int[n];
+        int[] greenSort = new int[n];
+        int[] blueSort = new int[n];
 
         int[] redArray = new int[n];
         int[] greenArray = new int[n];
@@ -116,10 +112,10 @@ public class ColorSorting {
     }
 
 
-    public static void main(String args[]) {
+    private static void main(String args[]) {
 
         ColorSorting instance = new ColorSorting(100);
-        instance.sort(instance.colors);
+        sort(instance.colors);
 
     }
 
@@ -127,14 +123,14 @@ public class ColorSorting {
 
         int rank = -1;
 
-        public myColor(int r, int g, int b) {
+        myColor(int r, int g, int b) {
             super(r, g, b);
         }
 
-        public myColor(int rgb) {
+        myColor(int rgb) {
             super(rgb);
         }
-        public myColor(Color color) {
+        myColor(Color color) {
             super(color.getRGB());
         }
 

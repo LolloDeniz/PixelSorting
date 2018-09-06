@@ -5,11 +5,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 
 public class PixelSorting {
@@ -18,11 +13,10 @@ public class PixelSorting {
     private JFrame frame;
     private int[][] pixels;
     private int x, y;
-    private int xBorder = 30, yBorder = 30;
 
     private boolean setupDone = false;
 
-    public JFrame setup(String path) throws IOException {
+    private JFrame setup(String path) throws IOException {
 
         File imgFile = new File(path);
         img1 = ImageIO.read(imgFile);
@@ -31,6 +25,8 @@ public class PixelSorting {
         img2 = new BufferedImage(x, y, BufferedImage.TYPE_INT_RGB);
 
         frame = new JFrame("PixelSorting");
+        int yBorder = 30;
+        int xBorder = 30;
         frame.setSize(x * 2 + 2 * xBorder, y + 2 * yBorder);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -113,7 +109,6 @@ public class PixelSorting {
 
     public void colorSwap(Color sourceColor, Color newColor, int tolerance) {
 
-        int source = sourceColor.getRGB();
         int newC = newColor.getRGB();
 
         for (int row = 0, col = 0; row < y; ) {
@@ -139,7 +134,7 @@ public class PixelSorting {
         frame.repaint();
     }
 
-    public void pixelSort() {
+    private void pixelSort() {
 
         int[] pixelArray = this.matrixToArray(pixels);
 
@@ -156,7 +151,7 @@ public class PixelSorting {
         frame.repaint();
     }
 
-    public int[] matrixToArray(int[][] pixelMatrix) {
+    private int[] matrixToArray(int[][] pixelMatrix) {
         int x = pixelMatrix[0].length;
         int y = pixelMatrix.length;
 
