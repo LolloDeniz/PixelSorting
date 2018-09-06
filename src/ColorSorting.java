@@ -2,6 +2,10 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Random;
 
+//ALTERNATIVE SORTING
+//NOT USED
+
+/*
 public class ColorSorting {
 
     private myColor[] colors;
@@ -143,3 +147,4 @@ public class ColorSorting {
 
 }
 
+*/

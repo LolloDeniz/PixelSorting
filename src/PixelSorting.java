@@ -5,9 +5,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
+import java.nio.Buffer;
 import java.util.concurrent.TimeUnit;
-
 
 public class PixelSorting {
 
@@ -15,6 +14,10 @@ public class PixelSorting {
     private JFrame frame;
     private int[][] pixels;
     private int x, y;
+    private JLabel label1;
+    private JLabel label2;
+    int yBorder = 30;
+    int xBorder = 30;
 
     private boolean setupDone = false;
 
@@ -26,21 +29,23 @@ public class PixelSorting {
         y = img1.getHeight();
         img2 = new BufferedImage(x, y, BufferedImage.TYPE_INT_RGB);
 
-        frame = new JFrame("PixelSorting");
-        int yBorder = 30;
-        int xBorder = 30;
+        frame = new JFrame("PixelSorting: "+path);
         frame.setSize(x * 2 + 2 * xBorder, y + 2 * yBorder);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         ImageIcon icon1 = new ImageIcon(img1);
         ImageIcon icon2 = new ImageIcon(img2);
-        JLabel label1 = new JLabel(icon1);
-        JLabel label2 = new JLabel(icon2);
+        label1 = new JLabel(icon1);
+        label2 = new JLabel(icon2);
 
-        frame.add(label1);
-        frame.add(label2);
+        JPanel panel=new JPanel();
+        panel.add(label1);
+        panel.add(label2);
 
-        frame.setLayout(new FlowLayout());
+        frame.add(panel);
+
+
+        //frame.setLayout(new FlowLayout());
         //frame.getContentPane().add(new JLabel(new ImageIcon(img1)));
         frame.setVisible(true);
 
@@ -141,28 +146,35 @@ public class PixelSorting {
         int[] pixelArray = this.matrixToArray(pixels);
 
         Color[] colorArray = getColors(pixelArray);
-        Color[] oldColors = new Color[colorArray.length];
-        System.arraycopy(colorArray, 0, oldColors, 0, oldColors.length);
+        //Color[] oldColors = new Color[colorArray.length];
+        //System.arraycopy(colorArray, 0, oldColors, 0, oldColors.length);
 
         //colorArray = ColorSorting.sort(colorArray);
         int[] prevPos= Hilbert.sort(256, colorArray, 16);
 
+        long tic=System.currentTimeMillis();
+
         for (int i = 0; i < colorArray.length; i++) {
             pixelArray[i] = colorArray[i].getRGB();
         }
-
 
         for (int i = 0; i < pixelArray.length; i++){
             img1.setRGB(prevPos[i]%x, prevPos[i]/x, Color.WHITE.getRGB());
             img2.setRGB(i%x, i/x, pixelArray[i]);
             frame.repaint();
 
-            long before=System.nanoTime();
-            while(before+50000>System.nanoTime());
+            if(i%5==0)
+                drawLine(prevPos[i], i, x, frame, label1, label2, pixelArray[i]);
+
+            //sleep     (better than TimeUnit.NANOSECONDS.sleep)
+            //long before=System.nanoTime();
+            //while(before+100>System.nanoTime());
 
         }
+        long toc=System.currentTimeMillis();
+        System.out.println(pixelArray.length+" points moved, elapsed time: "+(toc-tic)+" milliseconds");
 
-
+        //slow alternative
         /*for (int i = 0; i < pixelArray.length; i++) {
 
             int toTake=pixelArray[i];
@@ -198,6 +210,23 @@ public class PixelSorting {
         return result;
     }
 
+    private void drawLine(int startIndex, int endIndex, int width, JFrame frame,JLabel label1, JLabel label2, int color){
+
+
+       int yOffset=37;
+
+       Graphics g=frame.getGraphics();
+       int x1=label1.getX()+startIndex%width;
+       int y1=label1.getY()+startIndex/width+yOffset;
+       int x2=label2.getX()+endIndex%width;
+       int y2=label2.getY()+endIndex/width+yOffset;
+
+       Color lineColor=new Color(color);
+
+       g.setColor(new Color(lineColor.getRed(), lineColor.getGreen(), lineColor.getBlue(), 64));
+       g.drawLine(x1, y1, x2, y2);
+
+    }
 
     public static void main(String[] args) {
 
