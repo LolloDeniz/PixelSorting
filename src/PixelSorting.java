@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
 
 
 public class PixelSorting {
@@ -143,14 +145,25 @@ public class PixelSorting {
         System.arraycopy(colorArray, 0, oldColors, 0, oldColors.length);
 
         //colorArray = ColorSorting.sort(colorArray);
-        Hilbert.sort(256, colorArray, 16);
+        int[] prevPos= Hilbert.sort(256, colorArray, 16);
 
         for (int i = 0; i < colorArray.length; i++) {
             pixelArray[i] = colorArray[i].getRGB();
         }
 
 
-        for (int i = 0; i < pixelArray.length; i++) {
+        for (int i = 0; i < pixelArray.length; i++){
+            img1.setRGB(prevPos[i]%x, prevPos[i]/x, Color.WHITE.getRGB());
+            img2.setRGB(i%x, i/x, pixelArray[i]);
+            frame.repaint();
+
+            long before=System.nanoTime();
+            while(before+50000>System.nanoTime());
+
+        }
+
+
+        /*for (int i = 0; i < pixelArray.length; i++) {
 
             int toTake=pixelArray[i];
             int j=0;
@@ -161,7 +174,7 @@ public class PixelSorting {
             oldColors[j]=Color.WHITE;
             System.out.println(i + " pixels moved");
             frame.repaint();
-        }
+        }*/
 
         //img2.setRGB(0, 0, x, y, pixelArray, 0, x);
         frame.repaint();
@@ -190,7 +203,7 @@ public class PixelSorting {
 
         PixelSorting instance = new PixelSorting();
         try {
-            instance.setup("superga.jpg");
+            instance.setup("trekking.jpg");
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Failed to load image \n");

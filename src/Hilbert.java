@@ -20,7 +20,7 @@ public class Hilbert {
      * @param range       dimension of the cube (must be power of 2)
      * @param density indicates the minimum distance between two points (set high values for better performances)
      */
-    public static void sort(int range, Color[] colors, int density){
+    public static int[] sort(int range, Color[] colors, int density){
 
         pointsGeneration(range, density);
 
@@ -43,12 +43,20 @@ public class Hilbert {
             }
             customColors[i] = new customColor(colors[i]);
             customColors[i].closest=best;
+            customColors[i].position=i;
             System.out.println(i + " : " + bestDist);
         }
 
         Arrays.sort(customColors);
 
         System.arraycopy(customColors, 0, colors, 0, colors.length);
+
+        int[] prevPos= new int[colors.length];
+        for(int i=0; i<prevPos.length;i++){
+            prevPos[i]= customColors[i].position;
+        }
+
+        return prevPos;
     }
 
     private static boolean isSuitable(Color color, Color pt, int maxDist) {
@@ -148,6 +156,7 @@ public class Hilbert {
     private static class customColor extends Color implements Comparable<customColor>{
 
         int closest;
+        int position;
 
         public customColor(int r, int g, int b){
             super(r,g,b);
