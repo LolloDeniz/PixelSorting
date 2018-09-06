@@ -102,10 +102,10 @@ public class PixelSorting {
 
     private Color[] getColors(int[] pixels) {
         int x = pixels.length;
-        myColor[] result = new myColor[x];
+        Color[] result = new Color[x];
 
         for (int i = 0; i < x; i++) {
-            result[i] = new myColor(pixels[i]);
+            result[i] = new Color(pixels[i]);
         }
 
         return result;
@@ -145,7 +145,8 @@ public class PixelSorting {
 
         Color[] colorArray = getColors(pixelArray);
 
-        colorArray = ColorSorting.sort(colorArray);
+        //colorArray = ColorSorting.sort(colorArray);
+        Hilbert.sort(256, colorArray, 16);
 
         for (int i = 0; i < colorArray.length; i++) {
             pixelArray[i] = colorArray[i].getRGB();

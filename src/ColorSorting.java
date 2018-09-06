@@ -25,7 +25,7 @@ public class ColorSorting {
         myColor[] ary = new myColor[colors.length];
 
         for (int i = 0; i < colors.length; i++) {
-            ary[i] = (myColor) colors[i];
+            ary[i] = new myColor(colors[i]);
         }
 
         return sort(ary);
@@ -72,8 +72,6 @@ public class ColorSorting {
     }
 
 
-
-    
     static private void mergeSort(int[] colors, int left, int right, int[] res) {
         int center = (left + right) / 2;
         if (left < right) {
@@ -118,30 +116,34 @@ public class ColorSorting {
     }
 
 
-
     public static void main(String args[]) {
 
         ColorSorting instance = new ColorSorting(100);
         instance.sort(instance.colors);
 
     }
+
+    private static class myColor extends Color implements Comparable<myColor> {
+
+        int rank = -1;
+
+        public myColor(int r, int g, int b) {
+            super(r, g, b);
+        }
+
+        public myColor(int rgb) {
+            super(rgb);
+        }
+        public myColor(Color color) {
+            super(color.getRGB());
+        }
+
+
+        @Override
+        public int compareTo(myColor o) {
+            return this.rank - o.rank;
+        }
+    }
+
 }
 
-class myColor extends Color implements Comparable<myColor> {
-
-    int rank = -1;
-
-    public myColor(int r, int g, int b) {
-        super(r, g, b);
-    }
-
-    public myColor(int rgb) {
-        super(rgb);
-    }
-
-
-    @Override
-    public int compareTo(myColor o) {
-        return this.rank - o.rank;
-    }
-}
