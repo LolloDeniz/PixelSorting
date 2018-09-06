@@ -31,7 +31,7 @@ public class PixelSorting {
         img2 = new BufferedImage(x, y, BufferedImage.TYPE_INT_RGB);
 
         frame = new JFrame("PixelSorting");
-        frame.setSize(x*2 + 2 * xBorder, y + 2 * yBorder);
+        frame.setSize(x * 2 + 2 * xBorder, y + 2 * yBorder);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         ImageIcon icon1 = new ImageIcon(img1);
@@ -100,33 +100,12 @@ public class PixelSorting {
         return result;
     }
 
+    private Color[] getColors(int[] pixels) {
+        int x = pixels.length;
+        myColor[] result = new myColor[x];
 
-    private myColor[][] getColors(int[][] pixels) {
-
-        int x = pixels[0].length;
-        int y = pixels.length;
-
-        myColor[][] colorMatrix = new myColor[y][x];
-
-        for (int row = 0, col = 0; row < y; ) {
-
-            colorMatrix[row][col] = new myColor(pixels[row][col]);
-
-            col++;
-            if (col >= x) {
-                col = 0;
-                row++;
-            }
-        }
-        return colorMatrix;
-    }
-
-    private myColor[] getColors(int[] pixels){
-        int x= pixels.length;
-        myColor[] result=new myColor[x];
-
-        for(int i=0; i<x; i++){
-            result[i]=new myColor(pixels[i]);
+        for (int i = 0; i < x; i++) {
+            result[i] = new myColor(pixels[i]);
         }
 
         return result;
@@ -160,19 +139,19 @@ public class PixelSorting {
         frame.repaint();
     }
 
-    public void pixelSort(){
+    public void pixelSort() {
 
-        int[] pixelArray=this.matrixToArray(pixels);
-        //Arrays.sort(pixelArray);
+        int[] pixelArray = this.matrixToArray(pixels);
 
-        myColor[] colorArray = getColors(pixelArray);
-        Arrays.sort(colorArray);
+        Color[] colorArray = getColors(pixelArray);
 
-        for(int i=0; i<colorArray.length;i++){
-            pixelArray[i]=colorArray[i].getRGB();
+        colorArray = ColorSorting.sort(colorArray);
+
+        for (int i = 0; i < colorArray.length; i++) {
+            pixelArray[i] = colorArray[i].getRGB();
         }
 
-        img2.setRGB(0,0,x, y, pixelArray, 0,x);
+        img2.setRGB(0, 0, x, y, pixelArray, 0, x);
         frame.repaint();
     }
 
@@ -215,25 +194,5 @@ public class PixelSorting {
             }
         }*/
         instance.pixelSort();
-    }
-}
-
-class myColor extends java.awt.Color implements Comparable<myColor>{
-    public myColor(int rgb){
-        super(rgb);
-    }
-
-    @Override
-    public int compareTo(myColor o) {
-        int r1=this.getRed(), r2=o.getRed();
-        int g1=this.getGreen(), g2=o.getGreen();
-        int b1=this.getBlue(), b2=o.getBlue();
-
-        if(r1!=r2) return r1-r2;
-        if(g1!=g2) return g1-g2;
-        if(b1!=b2) return b1-b2;
-        else
-            return 0;
-
     }
 }
