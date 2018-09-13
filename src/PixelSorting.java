@@ -256,11 +256,14 @@ public class PixelSorting {
     public static void main(String[] args) {
 
         PixelSorting instance = new PixelSorting();
+        String path="superga.jpg";
         try {
-            instance.setup("superga.jpg");
+            instance.setup(path);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Failed to load image \n");
+            JOptionPane.showMessageDialog(null, path + " not found in this folder, please rename the image",
+                    "Failed to load image", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
