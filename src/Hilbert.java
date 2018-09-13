@@ -28,7 +28,6 @@ public class Hilbert {
         pointsGeneration(range, density);
 
         customColor[] customColors = new customColor[colors.length];
-
         int best, sum = 0;
         double bestDist;
 
@@ -51,13 +50,14 @@ public class Hilbert {
             customColors[i].position = i;
 
             sum += bestDist;
-            //System.out.println(i + " : " + bestDist);
+            System.out.print("\r" + ((i+1) * 100) / colors.length + "% sorted ( "+(i+1)+" / " + colors.length + " )");
         }
+        System.out.println("\n");
 
         long toc = System.currentTimeMillis();
 
         System.out.println("Found the nearest point for " + colors.length + " points");
-        System.out.println("Average distance: " + sum / colors.length + ", elapsed time: " + (toc - tic) + " milliseconds");
+        System.out.println("Average distance: " + String.format("%.2f", (float)sum / colors.length) + ", elapsed time: " + (toc - tic) + " milliseconds");
 
         Arrays.sort(customColors);
 
@@ -67,7 +67,6 @@ public class Hilbert {
         for (int i = 0; i < prevPos.length; i++) {
             prevPos[i] = customColors[i].position;
         }
-
         return prevPos;
     }
 
@@ -79,9 +78,7 @@ public class Hilbert {
     private static boolean isSuitable(Color color, Color pt, int maxDist) {
         if (Math.abs(color.getRed() - pt.getRed()) > maxDist) return false;
         if (Math.abs(color.getGreen() - pt.getGreen()) > maxDist) return false;
-        if (Math.abs(color.getBlue() - pt.getBlue()) > maxDist) return false;
-
-        return true;
+        return Math.abs(color.getBlue() - pt.getBlue()) <= maxDist;
     }
 
     /**
@@ -128,7 +125,6 @@ public class Hilbert {
             hilbert(n, density, x + n * dx + n * dx3, y + n * dy + n * dy3, z + n * dz + n * dz3, -dx3, -dy3, -dz3, dx, dy, dz, -dx2, -dy2, -dz2);
             hilbert(n, density, x + n * dx3, y + n * dy3, z + n * dz3, dx2, dy2, dz2, -dx3, -dy3, -dz3, -dx, -dy, -dz);
         }
-
     }
 
     static private double EDistance(Color color1, Color color2) {
@@ -139,9 +135,12 @@ public class Hilbert {
         return Math.sqrt(x + y + z);
     }
 
+    /**
+     * Test of color sorting with Hilbert Curve
+     * Generation and sorting of 1000 colors
+     */
     public static void main(String args[]) {
 
-        //Hilbert.pointsGeneration(256, 16);
         Random r = new Random();
         int n = 1000;
         Color[] colors = new Color[n];
@@ -150,9 +149,9 @@ public class Hilbert {
             colors[i] = new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256));
         }
 
-        JFrame frame = new JFrame("Test Hilber Color Sorting");
-
-        frame.setSize(1200, 300);
+        JFrame frame = new JFrame("Test Hilbert Color Sorting");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(1050, 260);
 
         BufferedImage img1 = new BufferedImage(n, 100, BufferedImage.TYPE_INT_RGB);
         BufferedImage img2 = new BufferedImage(n, 100, BufferedImage.TYPE_INT_RGB);
@@ -193,11 +192,7 @@ public class Hilbert {
         int closest;
         int position;
 
-        public customColor(int r, int g, int b) {
-            super(r, g, b);
-        }
-
-        public customColor(Color color) {
+        customColor(Color color) {
             super(color.getRGB());
         }
 
