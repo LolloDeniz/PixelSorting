@@ -198,7 +198,13 @@ public class Hilbert {
 
         @Override
         public int compareTo(customColor o) {
-            return -(this.closest - o.closest);
+
+            int gap=o.closest - this.closest;
+
+            if(gap!=0)
+                return gap;
+            else
+                return((o.getBlue()+o.getGreen()+o.getRed())-(this.getBlue()+this.getGreen()+this.getRed()));
         }
     }
 }
